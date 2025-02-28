@@ -46,10 +46,10 @@
         eraWidget.onConfiguration((configuration) => {
             // Tìm cấu hình đúng theo tên hoặc thứ tự
             configTemp = configuration.realtime_configs[0];
-            configWater = configuration.realtime_configs.find(cfg => cfg.name === "Water Level");
-            configTDS = configuration.realtime_configs.find(cfg => cfg.name === "TDS Value");
-            configPH = configuration.realtime_configs.find(cfg => cfg.name === "PH Value");
-            configConductivity = configuration.realtime_configs.find(cfg => cfg.name === "Conductivity");
+            configWater = configuration.realtime_configs[3];
+            configTDS = configuration.realtime_configs[1];
+            configPH = configuration.realtime_configs[2];
+            configConductivity = configuration.realtime_configs[4];
         });
 
         eraWidget.onValues((values) => {
