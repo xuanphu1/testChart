@@ -28,7 +28,7 @@
     <figure class="highcharts-figure">
         <div id="container"></div>
     </figure>
-    <input type="checkbox" id="Temperature">
+<input type="checkbox" id="Temperature">
 <input type="checkbox" id="Water level">
 
 <script>
@@ -115,7 +115,7 @@
                 // Dữ liệu ngẫu nhiên cho 5 giá trị
                 let newDataPoints = [
                     { seriesIndex: 0, y: TemperatureValue },  // Temperature (°C)
-                    { seriesIndex: 1, y: Math.random() * 100 }, // Water Level (%)
+                    { seriesIndex: 1, y: WaterLevelValue }, // Water Level (%)
                     { seriesIndex: 2, y: Math.random() * 500 }, // TDS Value (ppm)
                     { seriesIndex: 3, y: Math.random() * 14 },  // PH Value
                     { seriesIndex: 4, y: Math.random() * 2000 } // Conductivity (μS/cm)
