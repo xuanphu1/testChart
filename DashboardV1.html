@@ -30,6 +30,9 @@
     </figure>
 <input type="checkbox" id="Temperature">
 <input type="checkbox" id="Water level">
+<input type="checkbox" id="TDS Value">
+<input type="checkbox" id="PH Value">
+<input type="checkbox" id="Conductivity Value">
 
 <script>
     // Era Widget initialization
@@ -37,23 +40,40 @@
     let config = null;
     let TemperatureValue = 1; // Giá trị nhiệt độ
     let WaterLevelValue = 1;  // Giá trị mực nước
+    let TDSValue = 1;  // Giá trị mực nước
+    let PHValue = 1;  // Giá trị mực nước
+    let ConductivityValue = 1;  // Giá trị mực nước
+
 
     eraWidget.onConfiguration((configuration) => {
-        config = configuration.realtime_configs[0];
+        configTemp = configuration.realtime_configs.find(cfg => cfg.name === "Temperature");
+        configWater = configuration.realtime_configs.find(cfg => cfg.name === "Water Level");
+        configTDS = configuration.realtime_configs.find(cfg => cfg.name === "TDS Value");
+        configPH = configuration.realtime_configs.find(cfg => cfg.name === "PH Value");
+        configConductivity = configuration.realtime_configs.find(cfg => cfg.name === "Conductivity Value");
     });
 
     eraWidget.onValues((values) => {
         const input_temperature = document.getElementById('Temperature');
         const input_waterLevel = document.getElementById('Water level');
+        const input_tds = document.getElementById('TDS Value');
+        const input_ph = document.getElementById('PH Value');
+        const input_conductivity = document.getElementById('Conductivity Value');
 
         // Kiểm tra nếu config hợp lệ mới gán giá trị
         if (config && values[config.id]) {
-            TemperatureValue = values[config.id].value; 
-            WaterLevelValue = values[config.id].value; 
+            TemperatureValue = values[configTemp.id].value; 
+            WaterLevelValue = values[configWater.id].value;
+            TDSValue = values[configTDS.id].value;
+            PHValue = values[configPH.id].value;
+            ConductivityValue = values[configConductivity.id].value; 
             
             // Đặt trạng thái của checkbox
             input_temperature.checked = TemperatureValue > 0; 
             input_waterLevel.checked = WaterLevelValue > 0;
+            input_tds.checked = TDSValue > 0;
+            input_ph.checked = PHValue > 0;
+            input_conductivity.checked = ConductivityValue > 0;
         }
     });
 
