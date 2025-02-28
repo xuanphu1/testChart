@@ -11,6 +11,7 @@
     <script src="https://code.highcharts.com/modules/export-data.js"></script>
     <script src="https://code.highcharts.com/modules/accessibility.js"></script>
     <script src="https://www.unpkg.com/@eohjsc/era-widget@1.0.14/src/index.js"></script>
+
     <style>
         .highcharts-figure {
             min-width: 320px;
@@ -28,60 +29,61 @@
     <figure class="highcharts-figure">
         <div id="container"></div>
     </figure>
-<input type="checkbox" id="Temperature">
-<input type="checkbox" id="Water level">
-<input type="checkbox" id="TDS Value">
-<input type="checkbox" id="PH Value">
-<input type="checkbox" id="Conductivity Value">
 
-<script>
-    // Era Widget initialization
-    const eraWidget = new EraWidget();
-    let config = null;
-    let TemperatureValue = 1; // Giá trị nhiệt độ
-    let WaterLevelValue = 1;  // Giá trị mực nước
-    let TDSValue = 1;  // Giá trị mực nước
-    let PHValue = 1;  // Giá trị mực nước
-    let ConductivityValue = 1;  // Giá trị mực nước
-
-
-    eraWidget.onConfiguration((configuration) => {
-        configTemp = configuration.realtime_configs[0];
-        TDSValue = configuration.realtime_configs[1];
-        PHValue = configuration.realtime_configs[2];
-        WaterLevelValue = configuration.realtime_configs[3];
-        ConductivityValue = configuration.realtime_configs[4];
-    });
-
-    eraWidget.onValues((values) => {
-        const input_temperature = document.getElementById('Temperature');
-        const input_waterLevel = document.getElementById('Water level');
-        const input_tds = document.getElementById('TDS Value');
-        const input_ph = document.getElementById('PH Value');
-        const input_conductivity = document.getElementById('Conductivity Value');
-
-        // Kiểm tra nếu config hợp lệ mới gán giá trị
-        if (config && values[config.id]) {
-            TemperatureValue = values[configTemp.id].value; 
-            WaterLevelValue = values[configWater.id].value;
-            TDSValue = values[configTDS.id].value;
-            PHValue = values[configPH.id].value;
-            ConductivityValue = values[configConductivity.id].value; 
-            
-            // Đặt trạng thái của checkbox
-            input_temperature.checked = TemperatureValue > 0; 
-            input_waterLevel.checked = WaterLevelValue > 0;
-            input_tds.checked = TDSValue > 0;
-            input_ph.checked = PHValue > 0;
-            input_conductivity.checked = ConductivityValue > 0;
-        }
-    });
-
-    eraWidget.ready();
-</script>
+    <!-- Các checkbox để hiển thị dữ liệu -->
+    <input type="checkbox" id="Temperature">
+    <input type="checkbox" id="WaterLevel">
+    <input type="checkbox" id="TDSValue">
+    <input type="checkbox" id="PHValue">
+    <input type="checkbox" id="ConductivityValue">
 
     <script>
-        
+        // Era Widget initialization
+        const eraWidget = new EraWidget();
+        let configTemp, configWater, configTDS, configPH, configConductivity;
+        let TemperatureValue = 0, WaterLevelValue = 0, TDSValue = 0, PHValue = 0, ConductivityValue = 0;
+
+        eraWidget.onConfiguration((configuration) => {
+            // Tìm cấu hình đúng theo tên hoặc thứ tự
+            configTemp = configuration.realtime_configs.find(cfg => cfg.name === "Temperature");
+            configWater = configuration.realtime_configs.find(cfg => cfg.name === "Water Level");
+            configTDS = configuration.realtime_configs.find(cfg => cfg.name === "TDS Value");
+            configPH = configuration.realtime_configs.find(cfg => cfg.name === "PH Value");
+            configConductivity = configuration.realtime_configs.find(cfg => cfg.name === "Conductivity");
+        });
+
+        eraWidget.onValues((values) => {
+            const input_temperature = document.getElementById('Temperature');
+            const input_waterLevel = document.getElementById('WaterLevel');
+            const input_tds = document.getElementById('TDSValue');
+            const input_ph = document.getElementById('PHValue');
+            const input_conductivity = document.getElementById('ConductivityValue');
+
+            // Kiểm tra nếu config hợp lệ, chỉ cập nhật giá trị khi có dữ liệu
+            if (configTemp && values[configTemp.id]) {
+                TemperatureValue = values[configTemp.id].value;
+                input_temperature.checked = TemperatureValue > 0;
+            }
+            if (configWater && values[configWater.id]) {
+                WaterLevelValue = values[configWater.id].value;
+                input_waterLevel.checked = WaterLevelValue > 0;
+            }
+            if (configTDS && values[configTDS.id]) {
+                TDSValue = values[configTDS.id].value;
+                input_tds.checked = TDSValue > 0;
+            }
+            if (configPH && values[configPH.id]) {
+                PHValue = values[configPH.id].value;
+                input_ph.checked = PHValue > 0;
+            }
+            if (configConductivity && values[configConductivity.id]) {
+                ConductivityValue = values[configConductivity.id].value;
+                input_conductivity.checked = ConductivityValue > 0;
+            }
+        });
+
+        eraWidget.ready();
+
         // Khởi tạo dữ liệu ban đầu
         function generateInitialData() {
             const data = [];
@@ -99,10 +101,7 @@
         function addConductivityEffect(series, point) {
             if (!series.pulse) {
                 series.pulse = series.chart.renderer.circle()
-                    .attr({
-                        r: 5,
-                        opacity: 0
-                    })
+                    .attr({ r: 5, opacity: 0 })
                     .add(series.markerGroup);
             }
 
@@ -118,9 +117,7 @@
                     .animate({
                         r: 20,
                         opacity: 0
-                    }, {
-                        duration: 1000
-                    });
+                    }, { duration: 1000 });
             }, 1);
         }
 
@@ -132,13 +129,13 @@
             setInterval(function () {
                 const x = (new Date()).getTime();
 
-                // Dữ liệu ngẫu nhiên cho 5 giá trị
+                // Dữ liệu thực tế từ Era Widget
                 let newDataPoints = [
                     { seriesIndex: 0, y: TemperatureValue },  // Temperature (°C)
-                    { seriesIndex: 1, y: WaterLevelValue }, // Water Level (%)
-                    { seriesIndex: 2, y: TDSValue }, // TDS Value (ppm)
+                    { seriesIndex: 1, y: WaterLevelValue },  // Water Level (%)
+                    { seriesIndex: 2, y: Math.min(TDSValue, 100) },  // TDS Value (ppm) (giới hạn từ 0 - 100)
                     { seriesIndex: 3, y: PHValue },  // PH Value
-                    { seriesIndex: 4, y: ConductivityValue } // Conductivity (μS/cm)
+                    { seriesIndex: 4, y: Math.min(ConductivityValue, 100) }  // Conductivity (μS/cm) (giới hạn từ 0 - 100)
                 ];
 
                 newDataPoints.forEach((dataPoint) => {
@@ -177,13 +174,7 @@
                 title: {
                     text: 'Value'
                 },
-                plotLines: [
-                    {
-                        value: 0,
-                        width: 1,
-                        color: '#808080'
-                    }
-                ]
+                plotLines: [{ value: 0, width: 1, color: '#808080' }]
             },
 
             tooltip: {
@@ -191,45 +182,16 @@
                 pointFormat: '{point.x:%Y-%m-%d %H:%M:%S}<br/>{point.y:.2f}'
             },
 
-            legend: {
-                enabled: true
-            },
+            legend: { enabled: true },
 
-            exporting: {
-                enabled: false
-            },
+            exporting: { enabled: false },
 
             series: [
-                {
-                    name: 'Temperature (°C)',
-                    lineWidth: 2,
-                    color: 'red',
-                    data: generateInitialData()
-                },
-                {
-                    name: 'Water Level (%)',
-                    lineWidth: 2,
-                    color: 'blue',
-                    data: generateInitialData()
-                },
-                {
-                    name: 'TDS Value (ppm)',
-                    lineWidth: 2,
-                    color: 'green',
-                    data: generateInitialData()
-                },
-                {
-                    name: 'PH Value',
-                    lineWidth: 2,
-                    color: 'yellow',
-                    data: generateInitialData()
-                },
-                {
-                    name: 'Conductivity (μS/cm)',
-                    lineWidth: 2,
-                    color: 'purple',
-                    data: generateInitialData()
-                }
+                { name: 'Temperature (°C)', lineWidth: 2, color: 'red', data: generateInitialData() },
+                { name: 'Water Level (%)', lineWidth: 2, color: 'blue', data: generateInitialData() },
+                { name: 'TDS Value (ppm)', lineWidth: 2, color: 'green', data: generateInitialData() },
+                { name: 'PH Value', lineWidth: 2, color: 'yellow', data: generateInitialData() },
+                { name: 'Conductivity (μS/cm)', lineWidth: 2, color: 'purple', data: generateInitialData() }
             ]
         });
     </script>
