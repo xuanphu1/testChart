@@ -29,7 +29,7 @@
         <div id="container"></div>
     </figure>
     <input type="checkbox" id="Temperature">
-<input type="checkbox" id="WaterLevel">
+<input type="checkbox" id="Water level">
 
 <script>
     // Era Widget initialization
@@ -44,7 +44,7 @@
 
     eraWidget.onValues((values) => {
         const input_temperature = document.getElementById('Temperature');
-        const input_waterLevel = document.getElementById('WaterLevel');
+        const input_waterLevel = document.getElementById('Water level');
 
         // Kiểm tra nếu config hợp lệ mới gán giá trị
         if (config && values[config.id]) {
