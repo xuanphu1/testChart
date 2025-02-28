@@ -10,100 +10,79 @@
     <script src="https://code.highcharts.com/modules/exporting.js"></script>
     <script src="https://code.highcharts.com/modules/export-data.js"></script>
     <script src="https://code.highcharts.com/modules/accessibility.js"></script>
-    <script src="https://www.unpkg.com/@eohjsc/era-widget@1.0.14/src/index.js"></script>
+
     <style>
-        body {
-            font-family: 'Arial', sans-serif;
-            background: #1e1e1e;
-            color: white;
-            text-align: center;
-            margin: 0;
-        }
-
-        .container {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            min-height: 100vh;
-            padding: 20px;
-        }
-
-        .highcharts-figure {
-            background: #2d2d2d;
-            border-radius: 16px;
-            padding: 20px;
-            box-shadow: 0 4px 8px rgba(255, 255, 255, 0.1);
-            width: 90%;
-            max-width: 900px;
-            margin: 20px auto;
+        .highcharts-figure,
+        .highcharts-data-table table {
+            min-width: 320px;
+            max-width: 800px;
+            margin: 1em auto;
         }
 
         #container {
             height: 400px;
         }
 
+        .highcharts-data-table table {
+            font-family: Verdana, sans-serif;
+            border-collapse: collapse;
+            border: 1px solid #ebebeb;
+            margin: 10px auto;
+            text-align: center;
+            width: 100%;
+            max-width: 500px;
+        }
+
+        .highcharts-data-table caption {
+            padding: 1em 0;
+            font-size: 1.2em;
+            color: #555;
+        }
+
+        .highcharts-data-table th {
+            font-weight: 600;
+            padding: 0.5em;
+        }
+
+        .highcharts-data-table td,
+        .highcharts-data-table th,
+        .highcharts-data-table caption {
+            padding: 0.5em;
+        }
+
+        .highcharts-data-table thead tr,
+        .highcharts-data-table tr:nth-child(even) {
+            background: #f8f8f8;
+        }
+
+        .highcharts-data-table tr:hover {
+            background: #f1f7ff;
+        }
+
         .highcharts-description {
-            margin-top: 10px;
-            font-size: 14px;
-            color: #ccc;
+            margin: 0.3rem 10px;
         }
-
-        .widget {
-            background: #333;
-            border-radius: 16px;
-            padding: 20px;
-            box-shadow: 0 4px 8px rgba(255, 255, 255, 0.1);
-            width: 90%;
-            max-width: 900px;
-            margin: 20px auto;
-        }
-
     </style>
 </head>
 <body>
 
-    <div class="container">
-        <!-- Biểu đồ trong widget -->
-        <div class="widget">
-            <h2>Live Sensor Data</h2>
-            <figure class="highcharts-figure">
-                <div id="container"></div>
-                <p class="highcharts-description">
-                    Chart showing data updating every second, with old data being removed.
-                </p>
-            </figure>
-            <input type="checkbox" id="Temperature" />
-            <script>
-                // Era Widget initialization
-                const eraWidget = new EraWidget();
-                let config = null;
-                let TemperatureValue = 0; // Khởi tạo giá trị giá trị mặc định
-                const dataBuffer = [];
-        
-                eraWidget.onConfiguration((configuration) => {
-                    config = configuration.realtime_configs[0];
-                });
-        
-                eraWidget.onValues((values) => {
-                    const input = document.getElementById('Temperature');
-                    TemperatureValue = values[config.id].value; // Giả sử values[config.id].value là giá trị thực tế
-                    input.checked = values[config.id].value > 0; // Đặt trạng thái của checkbox dựa trên giá trị
-                });
-        
-                eraWidget.ready();
-            </script>
-        </div>
-    </div>
+    <figure class="highcharts-figure">
+        <div id="container"></div>
+        <p class="highcharts-description">
+            Chart showing data updating every second, with old data being removed.
+        </p>
+    </figure>
 
     <script>
-        // On chart load, start an interval that adds points to the chart and animate the pulsating marker.
+        // On chart load, start an interval that adds points to the chart and animate
+        // the pulsating marker.
         const onChartLoad = function () {
-            const chart = this, series = chart.series[0];
+            const chart = this,
+                series = chart.series[0];
 
             setInterval(function () {
                 const x = (new Date()).getTime(), // current time
-                      y = TemperatureValue;
+                    y = Math.random();
 
                 series.addPoint([x, y], true, true);
             }, 1000);
@@ -125,10 +104,12 @@
 
         // Plugin to add a pulsating marker on add point
         Highcharts.addEvent(Highcharts.Series, 'addPoint', e => {
-            const point = e.point, series = e.target;
+            const point = e.point,
+                series = e.target;
 
             if (!series.pulse) {
-                series.pulse = series.chart.renderer.circle().add(series.markerGroup);
+                series.pulse = series.chart.renderer.circle()
+                    .add(series.markerGroup);
             }
 
             setTimeout(() => {
@@ -152,15 +133,17 @@
         Highcharts.chart('container', {
             chart: {
                 type: 'spline',
-                backgroundColor: '#2d2d2d',
-                events: { load: onChartLoad }
+                events: {
+                    load: onChartLoad
+                }
             },
 
-            time: { useUTC: false },
+            time: {
+                useUTC: false
+            },
 
             title: {
-                text: 'Live Sensor Data',
-                style: { color: '#fff' }
+                text: 'Live random data'
             },
 
             accessibility: {
@@ -179,23 +162,23 @@
             xAxis: {
                 type: 'datetime',
                 tickPixelInterval: 150,
-                maxPadding: 0.1,
-                gridLineColor: '#444',
-                labels: { style: { color: '#fff' } }
+                maxPadding: 0.1
             },
 
             yAxis: {
                 title: {
-                    text: 'Value',
-                    style: { color: '#fff' }
+                    text: 'Value'
                 },
-                gridLineColor: '#444',
-                labels: { style: { color: '#fff' } }
+                plotLines: [
+                    {
+                        value: 0,
+                        width: 1,
+                        color: '#808080'
+                    }
+                ]
             },
 
             tooltip: {
-                backgroundColor: '#222',
-                style: { color: '#fff' },
                 headerFormat: '<b>{series.name}</b><br/>',
                 pointFormat: '{point.x:%Y-%m-%d %H:%M:%S}<br/>{point.y:.2f}'
             },
@@ -217,7 +200,6 @@
                 }
             ]
         });
-
     </script>
 
 </body>
