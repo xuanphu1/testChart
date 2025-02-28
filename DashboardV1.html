@@ -46,11 +46,11 @@
 
 
     eraWidget.onConfiguration((configuration) => {
-        configTemp = configuration.realtime_configs.find(cfg => cfg.name === "Temperature");
-        configWater = configuration.realtime_configs.find(cfg => cfg.name === "Water Level");
-        configTDS = configuration.realtime_configs.find(cfg => cfg.name === "TDS Value");
-        configPH = configuration.realtime_configs.find(cfg => cfg.name === "PH Value");
-        configConductivity = configuration.realtime_configs.find(cfg => cfg.name === "Conductivity Value");
+        configTemp = configuration.realtime_configs[0];
+        TDSValue = configuration.realtime_configs[1];
+        PHValue = configuration.realtime_configs[2];
+        WaterLevelValue = configuration.realtime_configs[3];
+        ConductivityValue = configuration.realtime_configs[4];
     });
 
     eraWidget.onValues((values) => {
@@ -136,9 +136,9 @@
                 let newDataPoints = [
                     { seriesIndex: 0, y: TemperatureValue },  // Temperature (°C)
                     { seriesIndex: 1, y: WaterLevelValue }, // Water Level (%)
-                    { seriesIndex: 2, y: Math.random() * 500 }, // TDS Value (ppm)
-                    { seriesIndex: 3, y: Math.random() * 14 },  // PH Value
-                    { seriesIndex: 4, y: Math.random() * 2000 } // Conductivity (μS/cm)
+                    { seriesIndex: 2, y: TDSValue }, // TDS Value (ppm)
+                    { seriesIndex: 3, y: PHValue },  // PH Value
+                    { seriesIndex: 4, y: ConductivityValue } // Conductivity (μS/cm)
                 ];
 
                 newDataPoints.forEach((dataPoint) => {
